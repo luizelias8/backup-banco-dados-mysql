@@ -1,0 +1,11 @@
+{
+    "mysql": {
+        "host": "localhost",
+        "usuario": "root",
+        "senha": "cursomysql",
+        "banco_dados": "classicmodels"
+    },
+    "backup": {
+        "diretorio_backup": "C:\\Dumps"
+    }
+}
