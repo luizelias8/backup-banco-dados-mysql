@@ -1,6 +1,6 @@
 # Script de Backup MySQL
 
-Este projeto fornece um script Python para realizar backup de um banco de dados MySQL. As configurações do banco de dados e o diretório de backup são especificados em um arquivo de configuração no formato JSON.
+Este projeto fornece um script Python para realizar backups de múltiplos bancos de dados MySQL. As configurações, incluindo credenciais do banco de dados e o diretório de backup, são especificadas em um arquivo de configuração no formato JSON.
 
 ## Pré-requisitos
 

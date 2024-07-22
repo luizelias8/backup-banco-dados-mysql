@@ -3,7 +3,10 @@
         "host": "localhost",
         "usuario": "root",
         "senha": "cursomysql",
-        "banco_dados": "classicmodels"
+        "bancos_dados": [
+            "classicmodels",
+            "sakila"
+        ]
     },
     "backup": {
         "diretorio_backup": "C:\\Dumps"
