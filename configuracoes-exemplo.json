@@ -2,13 +2,22 @@
     "mysql": {
         "host": "localhost",
         "usuario": "root",
-        "senha": "cursomysql",
+        "senha": "sua_senha",
         "bancos_dados": [
-            "classicmodels",
-            "sakila"
+            "banco1",
+            "banco2"
         ]
     },
     "backup": {
-        "diretorio_backup": "C:\\Dumps"
+        "diretorio_backup": "C:\\Caminho\\Para\\Seu\\Diretorio"
+    },
+    "email": {
+        "servidor_smtp": "smtp.exemplo.com",
+        "porta_smtp": 587,
+        "usuario_smtp": "seu-email@exemplo.com",
+        "senha_smtp": "sua_senha",
+        "email_remetente": "seu-email@exemplo.com",
+        "email_destinatario": "destinatario@exemplo.com",
+        "assunto": "Notificação de Backup MySQL"
     }
 }

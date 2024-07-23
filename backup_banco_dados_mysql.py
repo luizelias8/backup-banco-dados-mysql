@@ -4,6 +4,9 @@ from datetime import datetime
 import subprocess
 import zipfile
 import logging
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 # Variável para armazenar o diretório do script
 diretorio_script = os.path.dirname(os.path.abspath(__file__))
@@ -30,6 +33,15 @@ senha = configuracoes['mysql']['senha']
 bancos_dados = configuracoes['mysql']['bancos_dados']
 diretorio_backup = configuracoes['backup'].get('diretorio_backup', '').strip()
 
+# Configuração do e-mail
+servidor_smtp = configuracoes['email']['servidor_smtp']
+porta_smtp = configuracoes['email']['porta_smtp']
+usuario_smtp = configuracoes['email']['usuario_smtp']
+senha_smtp = configuracoes['email']['senha_smtp']
+email_remetente = configuracoes['email']['email_remetente']
+email_destinatario = configuracoes['email']['email_destinatario']
+assunto = configuracoes['email']['assunto']
+
 # Define o diretório de salvamento
 if not diretorio_backup:
     diretorio_backup = diretorio_script
@@ -38,6 +50,23 @@ if not diretorio_backup:
 if not os.path.exists(diretorio_backup):
     os.makedirs(diretorio_backup)
     logging.info(f"Diretório de backup criado: {diretorio_backup}")
+
+def enviar_email(mensagem):
+    try:
+        msg = MIMEMultipart()
+        msg['From'] = email_remetente
+        msg['To'] = email_destinatario
+        msg['Subject'] = assunto
+
+        msg.attach(MIMEText(mensagem, 'plain'))
+
+        with smtplib.SMTP(servidor_smtp, porta_smtp) as servidor:
+            servidor.starttls()
+            servidor.login(usuario_smtp, senha_smtp)
+            servidor.sendmail(email_remetente, email_destinatario, msg.as_string())
+        logging.info(f"E-mail enviado para {email_destinatario}")
+    except Exception as e:
+        logging.error(f"Erro ao enviar e-mail: {str(e)}")
 
 # Itera sobre a lista de bancos de dados e realiza o backup
 for banco_dados in bancos_dados:
@@ -71,7 +100,15 @@ for banco_dados in bancos_dados:
         os.remove(arquivo_backup)
         logging.info(f"Arquivo SQL não compactado removido: {arquivo_backup}")
 
+        # Envia e-mail de sucesso
+        mensagem_email = f"O backup do banco de dados '{banco_dados}' foi concluído com sucesso. Arquivo compactado: {arquivo_zip}"
+        enviar_email(mensagem_email)
+
     except subprocess.CalledProcessError as e:
-        logging.error(f"Erro ao fazer o backup do banco de dados '{banco_dados}': {e.stderr}")
+        mensagem_erro = f"Erro ao fazer o backup do banco de dados '{banco_dados}': {e.stderr}"
+        logging.error(mensagem_erro)
+        enviar_email(mensagem_erro)
     except Exception as e:
-        logging.error(f"Erro inesperado ao processar o banco de dados '{banco_dados}': {str(e)}")
+        mensagem_erro = f"Erro inesperado ao processar o banco de dados '{banco_dados}': {str(e)}"
+        logging.error(mensagem_erro)
+        enviar_email(mensagem_erro)
