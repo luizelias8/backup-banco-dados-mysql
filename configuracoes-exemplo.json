@@ -9,7 +9,8 @@
         ]
     },
     "backup": {
-        "diretorio_backup": "C:\\Caminho\\Para\\Seu\\Diretorio"
+        "diretorio_backup": "C:\\Caminho\\Para\\Seu\\Diretorio",
+        "numero_maximo_backups": 3
     },
     "email": {
         "servidor_smtp": "smtp.exemplo.com",
