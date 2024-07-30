@@ -20,9 +20,9 @@ def listar_arquivos_backup(diretorio_backup):
 
 def remover_arquivos_antigos(arquivos_backup, numero_maximo_backups):
     """Remove arquivos de backup antigos, mantendo apenas os mais recentes."""
-    arquivos_backup_ordenados = sorted(arquivos_backup, key=lambda x: os.path.getmtime(x), reverse=True)
+    arquivos_backup_ordenados = sorted(arquivos_backup, key=lambda x: os.path.getmtime(x))
     if len(arquivos_backup) > numero_maximo_backups:
-        arquivos_para_remover = arquivos_backup[numero_maximo_backups:]
+        arquivos_para_remover = arquivos_backup_ordenados[:len(arquivos_backup_ordenados) - numero_maximo_backups]
         for arquivo in arquivos_para_remover:
             os.remove(arquivo)
             print(f'Backup removido: {arquivo}')
