@@ -23,7 +23,7 @@ logging.basicConfig(
 
 # Lê as configurações do arquivo configuracoes.cfg
 caminho_configuracoes = os.path.join(diretorio_script, 'configuracoes.json')
-with open(caminho_configuracoes, 'r') as arquivo_configuracoes:
+with open(caminho_configuracoes, 'r', encoding='utf-8') as arquivo_configuracoes:
     configuracoes = json.load(arquivo_configuracoes)
 
 # Recupera os valores das configurações
