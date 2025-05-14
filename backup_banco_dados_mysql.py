@@ -51,14 +51,72 @@ if not os.path.exists(diretorio_backup):
     os.makedirs(diretorio_backup)
     logging.info(f"Diretório de backup criado: {diretorio_backup}")
 
-def enviar_email(mensagem):
+def criar_email_html(mensagem, sucesso=True):
+    """
+    Cria um template HTML estilizado para o e-mail
+
+    Args:
+        mensagem (str): Mensagem a ser incluída no corpo do e-mail
+        sucesso (bool): Indica se o backup foi bem-sucedido
+
+    Returns:
+        str: Corpo do e-mail em HTML
+    """
+    status_texto = 'Sucesso' if sucesso else 'Falha'
+    cor_cabecalho = '#4CAF50' if sucesso else '#F44336' # Verde para sucesso, Vermelho para falha
+
+    # Template HTML com estilos CSS embutidos
+    template_html = f"""
+    <!DOCTYPE html>
+    <html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Relatório de Backup</title>
+    </head>
+    <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="border: 1px solid #ddd; border-radius: 5px; overflow: hidden;">
+            <!-- Cabeçalho -->
+            <div style="background-color: {cor_cabecalho}; color: white; padding: 15px; text-align: center;">
+                <h1 style="margin: 0; font-size: 24px;">Relatório de Backup - {status_texto}</h1>
+            </div>
+
+            <!-- Conteúdo -->
+            <div style="padding: 20px;">
+                <p style="margin-top: 0;"><strong>Data:</strong> {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}</p>
+                <p><strong>Status:</strong> {status_texto}</p>
+
+                <div style="background-color: #f9f9f9; border-left: 4px solid {cor_cabecalho}; padding: 15px; margin: 15px 0;">
+                    <p style="margin: 0;">{mensagem}</p>
+                </div>
+
+                <p style="margin-bottom: 0;">Para mais detalhes, consulte o arquivo de log.</p>
+            </div>
+
+            <!-- Rodapé -->
+            <div style="background-color: #f5f5f5; padding: 15px; text-align: center; font-size: 12px; color: #777;">
+                <p style="margin: 0;">Este é um e-mail automático. Por favor, não responda a esta mensagem.</p>
+                <p style="margin: 5px 0 0 0;">Sistema de Backup Automático de Banco de Dados</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+
+    return template_html
+
+def enviar_email(mensagem, sucesso=True):
     try:
-        msg = MIMEMultipart()
+        msg = MIMEMultipart('alternative')
         msg['From'] = email_remetente
         msg['To'] = email_destinatario
         msg['Subject'] = assunto
 
-        msg.attach(MIMEText(mensagem, 'plain'))
+        # Cria a versão HTML do e-mail
+        html = criar_email_html(mensagem, sucesso)
+
+        # Anexa o conteúdo HTML ao e-mail
+        msg.attach(MIMEText(html, 'html'))
 
         with smtplib.SMTP(servidor_smtp, porta_smtp) as servidor:
             servidor.starttls()
